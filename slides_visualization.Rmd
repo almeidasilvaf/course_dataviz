@@ -1,0 +1,1423 @@
+---
+title: "Processing and visualizing data in the tidyverse"
+author: "Fabrício de Almeida Silva  @almeidasilvaf"
+institute: "PGBV/UENF"
+date: "May, 2021"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: ["default", "assets/venanciolab-fonts.css", "assets/venanciolab.css"]
+    self_contained: false
+    seal: true
+    nature:
+      ratio: "16:9"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: "https://platform.twitter.com/widgets.js"
+      navigation:
+        scroll: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE, warning = FALSE, message = FALSE,
+  fig.width = 7, fig.height = 6, fig.align='center'
+)
+options(htmltools.dir.version = TRUE)
+```
+
+```{r extra, include=FALSE}
+xaringanExtra::use_panelset()
+xaringanExtra::use_scribble()
+xaringanExtra::use_tile_view()
+library(palmerpenguins)
+library(tidyverse)
+```
+
+class: inverse, middle, center
+
+# Data visualization with ggplot2
+
+---
+
+background-image: url("https://qph.fs.quoracdn.net/main-qimg-834d36ac56c16413f8948c4b9b3ca0df")
+background-size: 95%
+
+---
+
+## On plots
+
+.panelset[
+.panel[.panel-name[Good plots]
+Good plots have: 
+
+- Clearly-labeled axes.
+
+- Text that are large enough to see.
+
+- Axes that are not misleading.
+
+- Data that are displayed appropriately considering the type of data you have.
+]
+
+There are **exploratory plots** and **explanatory plots**.
+
+.panel[.panel-name[Exploratory plots]
+These plots help us **identify patterns and understand them**. Some of their features:
+
+- they are made quickly
+
+- you should not be concerned about axes labels, titles, etc.
+
+- they are made all the time during analyses
+]
+
+.panel[.panel-name[Explanatory plots]
+These plots are used for **communicating information with others**. Things to consider:
+
+- They may take a lot of time to be produced
+
+- Typically, you will make just a few of them
+
+]
+]
+
+---
+
+background-image: url("https://mk0rfortheresto0o08q.kinstacdn.com/wp-content/uploads/2019/07/grammar-of-graphics.png")
+background-size: 95%
+
+## The grammar of graphics
+
+.footnote[Source: David - R for the Rest of Us]
+
+---
+
+background-image: url("https://image.slidesharecdn.com/grammarofgraphicsdvny-181102042310/95/grammar-of-graphics-the-secret-sauce-of-powerful-data-stories-15-638.jpg?cb=1541133222")
+background-size: 95%
+
+## The grammar of graphics
+
+.footnote[Source: Ganes Kesari]
+
+---
+
+background-image: url("figs/aes.png")
+background-size: 95%
+
+## Common aesthetics
+
+.footnote[Source: Claus Wilke]
+
+---
+
+## ggplot2 syntax
+
+.pull-left[
+```{r ggplot_1, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, 
+                     y = body_mass_g))
+```
+]
+.pull-right[
+```{r ggplot_1_show, ref.label='ggplot_1'}
+```
+]
+
+---
+
+## ggplot2 syntax
+
+.pull-left[
+```{r ggplot_2, echo=TRUE, eval=FALSE}
+ggplot(penguins) +
+  geom_point(aes(x = bill_length_mm, 
+                 y = body_mass_g))
+```
+]
+.pull-right[
+```{r ggplot_2_show, ref.label='ggplot_2'}
+```
+]
+
+---
+
+## ggplot2 syntax
+
+.pull-left[
+```{r ggplot_3, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, 
+                     y = body_mass_g)) +
+  geom_point()
+```
+]
+.pull-right[
+```{r ggplot_3_show, ref.label='ggplot_3'}
+```
+]
+
+---
+
+## ggplot2 syntax
+
+.pull-left[
+```{r ggplot_4, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species))
+```
+]
+.pull-right[
+```{r ggplot_4_show, ref.label='ggplot_4'}
+```
+]
+
+---
+
+## ggplot2 syntax
+
+.pull-left[
+```{r ggplot_5, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  facet_wrap(~ year)
+```
+]
+.pull-right[
+```{r ggplot_5_show, ref.label='ggplot_5'}
+```
+]
+
+---
+
+## ggplot2 syntax
+
+.pull-left[
+```{r ggplot_6, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  facet_wrap(~ year) +
+  theme_classic()
+```
+]
+.pull-right[
+```{r ggplot_6_show, ref.label='ggplot_6'}
+```
+]
+
+---
+
+## ggplot2 syntax
+
+.pull-left[
+```{r ggplot_7, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  facet_wrap(~ year) +
+  theme_bw()
+```
+]
+.pull-right[
+```{r ggplot_7_show, ref.label='ggplot_7'}
+```
+]
+
+---
+
+## ggplot2 syntax
+
+.pull-left[
+```{r ggplot_8, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  facet_wrap(~ year) +
+  theme_bw() +
+  scale_colour_brewer(palette="Set2")
+```
+]
+.pull-right[
+```{r ggplot_8_show, ref.label='ggplot_8'}
+```
+]
+
+---
+
+## ggplot2 syntax
+
+.pull-left[
+```{r ggplot_9, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  facet_wrap(~ year) +
+  theme_bw() +
+  scale_colour_brewer(palette="Set2") +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species")
+```
+]
+.pull-right[
+```{r ggplot_9_show, ref.label='ggplot_9'}
+```
+]
+
+---
+
+## ggplot2 syntax
+
+.pull-left[
+```{r ggplot_10, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  facet_wrap(~ year) +
+  theme_bw() +
+  scale_colour_brewer(palette="Set2") +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year")
+```
+]
+.pull-right[
+```{r ggplot_10_show, ref.label='ggplot_10'}
+```
+]
+
+---
+
+## ggplot2 syntax
+
+.pull-left[
+```{r ggplot_11, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  facet_wrap(~ year) +
+  theme_bw() +
+  scale_colour_brewer(palette="Set2") +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r ggplot_11_show, ref.label='ggplot_11'}
+```
+]
+
+---
+
+## Scatterplots (geom_point)
+
+**Data:** Two continuous variables. They are used to explore relationships.
+
+.pull-left[
+```{r scatterplot, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  facet_wrap(~ year) +
+  theme_bw() +
+  scale_colour_brewer(palette="Set2") +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r scatterplot_show, ref.label='scatterplot'}
+```
+]
+
+---
+
+## Smooth and regression lines
+
+.pull-left[
+```{r smooth, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth() +
+  facet_wrap(~ year) +
+  theme_bw() +
+  scale_colour_brewer(palette="Set2") +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r show_smooth, ref.label='smooth'}
+```
+]
+
+---
+
+## Smooth and regression lines
+
+.pull-left[
+```{r smooth1, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(method="lm") +
+  facet_wrap(~ year) +
+  theme_bw() +
+  scale_colour_brewer(palette="Set2") +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r show_smooth1, ref.label='smooth1'}
+```
+]
+
+---
+
+## Smooth and regression lines
+
+.pull-left[
+```{r smooth2, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(aes(color = species), method="lm") +
+  facet_wrap(~ year) +
+  theme_bw() +
+  scale_colour_brewer(palette="Set2") +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r show_smooth2, ref.label='smooth2'}
+```
+]
+
+---
+
+## Line plots (geom_line)
+
+**Data:** Quantitative variable over time.
+
+.pull-left[
+```{r lineplot, echo=TRUE, eval=FALSE}
+penguins %>%
+  group_by(year, species) %>%
+  summarise(mean_bill_length = mean(bill_length_mm, na.rm=TRUE)) %>%
+  ungroup() %>%
+  mutate(year = as.factor(year)) %>%
+  ggplot(., aes(x=year, y=mean_bill_length, group=species)) + 
+  geom_line(aes(color=species))
+```
+]
+.pull-right[
+```{r ref.label='lineplot'}
+```
+]
+
+---
+
+## Line plots (geom_line)
+
+**Data:** Quantitative variable over time.
+
+.pull-left[
+```{r lineplot2, echo=TRUE, eval=FALSE}
+penguins %>%
+  group_by(year, species) %>%
+  summarise(mean_bill_length = mean(bill_length_mm, na.rm=TRUE)) %>%
+  ungroup() %>%
+  mutate(year = as.factor(year)) %>%
+  ggplot(., aes(x=year, y=mean_bill_length, group=species)) + 
+  geom_line(aes(color=species)) +
+  geom_point(color="grey40") +
+  scale_color_viridis_d() +
+  theme_bw() +
+  labs(color="Species",
+       x="Year", y="Mean bill length (mm)") +
+  ggtitle("Mean bill length over time for penguin species") +
+  ylim(c(0,50))
+```
+]
+.pull-right[
+```{r ref.label='lineplot2'}
+```
+]
+
+---
+
+## Barplot (geom_bar)
+
+**Data:** counts of a single categorical variable.
+
+.pull-left[
+```{r barplot1, echo=TRUE, eval=FALSE}
+ggplot(penguins) +
+  geom_bar(aes(year))
+```
+]
+.pull-right[
+```{r show_barplot1, ref.label='barplot1'}
+```
+]
+
+---
+
+## Barplot (geom_bar)
+
+**Data:** counts of a single categorical variable.
+
+.pull-left[
+```{r barplot2, echo=TRUE, eval=FALSE}
+ggplot(penguins) +
+  geom_bar(aes(year, fill=year)) +
+  ylim(0, 150) +
+  labs(x="Year", y="Count") +
+  ggtitle("Frequency of penguins per year") +
+  theme_bw()
+```
+]
+.pull-right[
+```{r show_barplot2, ref.label='barplot2'}
+```
+]
+
+---
+
+## Grouped barplot (position="dodge")
+
+**Data:** counts of values broken down across categorical variables.
+
+.pull-left[
+```{r gbarplot, echo=TRUE, eval=FALSE}
+ggplot(penguins) +
+  geom_bar(aes(year, fill=species), position="dodge")
+```
+]
+.pull-right[
+```{r show_gbarplot, ref.label='gbarplot'}
+```
+]
+
+---
+
+## Grouped barplot (position="dodge")
+
+**Data:** counts of values broken down across categorical variables.
+
+.pull-left[
+```{r gbarplot2, echo=TRUE, eval=FALSE}
+ggplot(penguins) +
+  geom_bar(aes(year, fill=species), position="dodge") +
+  labs(x="Year", y="Count") +
+  ggtitle("Frequency of penguins per year") +
+  scale_fill_viridis_d() +
+  labs(fill="Species") +
+  theme_bw()
+```
+]
+.pull-right[
+```{r show_gbarplot2, ref.label='gbarplot2'}
+```
+]
+
+---
+
+## Stacked barplot (position="fill")
+
+**Data:** counts/proportions of values broken down across categorical variables.
+
+.pull-left[
+```{r sbarplot, echo=TRUE, eval=FALSE}
+ggplot(penguins) +
+  geom_bar(aes(year, fill=species), position="fill")
+```
+]
+.pull-right[
+```{r show_sbarplot, ref.label='sbarplot'}
+```
+]
+
+---
+
+## Stacked barplot (position="fill")
+
+**Data:** counts/proportions of values broken down across categorical variables.
+
+.pull-left[
+```{r sbarplot2, echo=TRUE, eval=FALSE}
+ggplot(penguins) +
+  geom_bar(aes(year, fill=species), position="fill") +
+  labs(x="Year", y="Count") +
+  ggtitle("Frequency of penguins per year") +
+  scale_fill_viridis_d() +
+  labs(fill="Species") +
+  theme_bw()
+```
+]
+
+.pull-right[
+```{r show_sbarplot2, ref.label='sbarplot2'}
+```
+]
+
+---
+
+## Histograms (geom_histogram)
+
+**Data:** a single continuous variable.
+
+.pull-left[
+```{r histogram, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(body_mass_g)) +
+  geom_histogram()
+```
+]
+
+.pull-right[
+```{r show_histogram, ref.label='histogram'}
+```
+]
+
+---
+
+## Histograms (geom_histogram)
+
+**Data:** a single continuous variable.
+
+.pull-left[
+```{r histogram2, echo=TRUE, eval=FALSE}
+penguins %>%
+  filter(!is.na(sex)) %>%
+  ggplot(., aes(body_mass_g)) +
+  geom_histogram(bins = 40, color='black') +
+  theme_bw() +
+  ggtitle("Distribution of body mass (in g)") +
+  labs(x="Body mass (g)", y="Count")
+```
+]
+
+.pull-right[
+```{r show_histogram2, ref.label='histogram2'}
+```
+]
+
+---
+
+## Density plots (geom_density)
+
+**Data:** a single continuous variable. They are a smooth version of histograms, and they are not dependent on the number of bins.
+
+.pull-left[
+```{r density1, echo=TRUE, eval=FALSE}
+penguins %>%
+  filter(!is.na(sex)) %>%
+  ggplot(., aes(body_mass_g)) +
+  geom_density() 
+```
+]
+
+.pull-right[
+```{r show_density1, ref.label='density1'}
+```
+]
+
+---
+
+## Density plots (geom_density)
+
+**Data:** a single continuous variable. They are a smooth version of histograms, and they are not dependent on the number of bins.
+
+.pull-left[
+```{r density2, echo=TRUE, eval=FALSE}
+penguins %>%
+  filter(!is.na(sex)) %>%
+  ggplot(., aes(body_mass_g)) +
+  geom_density(fill="grey") +
+  theme_bw() +
+  ggtitle("Distribution of body mass (in g)") +
+  labs(x="Body mass (g)", y="Count")
+```
+]
+
+.pull-right[
+```{r show_density2, ref.label='density2'}
+```
+]
+
+---
+
+## Histogram + density
+
+.pull-left[
+```{r density3, echo=TRUE, eval=FALSE}
+penguins %>%
+  filter(!is.na(sex)) %>%
+  ggplot(., aes(body_mass_g)) +
+  geom_histogram(aes(y = ..density..), 
+                 fill="grey60", color="grey30") +
+  geom_density(fill="grey40", color="grey30", alpha=0.6) +
+  theme_bw() +
+  ggtitle("Distribution of body mass (in g)") +
+  labs(x="Body mass (g)", y="Count")
+```
+]
+
+.pull-right[
+```{r show_density3, ref.label='density3'}
+```
+]
+
+
+---
+
+## Box plots
+
+**Data:** Summary of a quantitative variable broken down by a categorical variable.
+
+.pull-left[
+```{r boxplot1, echo=TRUE, eval=FALSE}
+penguins %>%
+  filter(!is.na(sex)) %>%
+  ggplot(., aes(x=sex, y=body_mass_g)) +
+  geom_boxplot(aes(fill=sex))
+```
+]
+.pull-right[
+```{r ref.label="boxplot1"}
+```
+]
+
+---
+
+## Box plots
+
+**Data:** Summary of a quantitative variable broken down by a categorical variable.
+
+.pull-left[
+```{r boxplot2, echo=TRUE, eval=FALSE}
+penguins %>%
+  filter(!is.na(sex)) %>%
+  ggplot(., aes(x=species, y=body_mass_g)) +
+  geom_boxplot(aes(fill=sex))
+```
+]
+.pull-right[
+```{r ref.label="boxplot2"}
+```
+]
+
+---
+
+## Box plots
+
+**Data:** Summary of a quantitative variable broken down by a categorical variable.
+
+.pull-left[
+```{r boxplot3, echo=TRUE, eval=FALSE}
+penguins %>%
+  filter(!is.na(sex)) %>%
+  ggplot(., aes(x=species, y=body_mass_g)) +
+  geom_boxplot(aes(fill=sex)) +
+  scale_fill_viridis_d(alpha=0.7) +
+  theme_bw() +
+  labs(fill="Sex",
+       x="Species", y="Distribution of body mass (g)") +
+  ggtitle("Distribution of body mass for different sexes across species")
+```
+]
+.pull-right[
+```{r ref.label="boxplot3"}
+```
+]
+
+---
+
+## Violin plots
+
+**Data:** Summary of a quantitative variable broken down by a categorical variable.
+
+.pull-left[
+```{r violin1, echo=TRUE, eval=FALSE}
+penguins %>%
+  filter(!is.na(sex)) %>%
+  ggplot(., aes(x=species, y=body_mass_g)) +
+  geom_violin(aes(fill=sex)) +
+  scale_fill_viridis_d(alpha=0.7) +
+  theme_bw() +
+  labs(fill="Sex",
+       x="Species", y="Distribution of body mass (g)") +
+  ggtitle("Distribution of body mass for different sexes across species")
+```
+]
+.pull-right[
+```{r ref.label="violin"}
+```
+]
+
+---
+
+## Violin plots
+
+**Data:** Summary of a quantitative variable broken down by a categorical variable.
+
+.pull-left[
+```{r violin2, echo=TRUE, eval=FALSE}
+penguins %>%
+  filter(!is.na(sex)) %>%
+  ggplot(., aes(x=sex, y=body_mass_g)) +
+  geom_violin(aes(fill=sex), trim=FALSE, width=0.4, alpha=0.7) +
+  scale_fill_viridis_d() +
+  geom_boxplot(fill="white", width=0.1) +
+  facet_wrap(~species) +
+  theme_bw() +
+  labs(fill="Sex",
+       x="Species", y="Distribution of body mass (g)") +
+  ggtitle("Distribution of body mass for different sexes across species")
+```
+]
+.pull-right[
+```{r ref.label="violin2"}
+```
+]
+
+---
+
+background-image: url(https://blog.bioturing.com/wp-content/uploads/2018/11/BoxViolin.gif)
+background-size: 90%
+
+## Always pick violin plots over box plots
+
+.footnote[Source: autodeskresearch.com]
+
+---
+
+## Summary of geoms we've covered
+
+- geom_point() - **scatterplots**
+
+- geom_smooth() - **smooth and regression lines**
+
+- geom_line() - **line plot**
+
+- geom_bar() - **barplot**
+  - geom_bar(position="dodge") - grouped barplot
+  - geom_bar(position="fill) - stacked barplot
+  
+- geom_histogram() - **histogram**
+
+- geom_density() - **density plot**
+
+- geom_boxplot() - **boxplot**
+
+- geom_violin() - **violin plot**
+
+---
+
+background-image: url(figs/paper_fig1.png)
+background-size: 55%
+background-position: 50% 60%
+
+## On the universe of geoms
+
+.footnote[Almeida-Silva *et al.,* 2020]
+
+---
+
+background-image: url(figs/paper_fig2.png)
+background-size: 55%
+background-position: 95% 60%
+
+## On the universe of geoms
+
+.footnote[Almeida-Silva *et al.,* 2021]
+
+---
+
+background-image: url(figs/paper_fig3.png)
+background-size: 55%
+background-position: 50% 60%
+
+## On the vast universe of geoms
+
+.footnote[Almeida-Silva *et al.,* 2021]
+
+
+---
+
+background-image: url("https://media.giphy.com/media/ZVik7pBtu9dNS/giphy.gif")
+background-position: 5% 50%
+background-size: 35%
+
+## Exercise #7
+
+.pull-right-2[
+Data: [Netflix data set](https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-04-20/netflix_titles.csv)
+
+Plot the number of Netflix titles over time. Is there any trend?
+]
+
+---
+
+class: inverse, center, middle
+
+# Plot customization
+
+---
+
+## Colors
+
+A single color can be selected (**outside of *aes()* **)
+
+.pull-left[
+```{r colors1, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(color="blue") +
+  geom_smooth(aes(color = species), method="lm") +
+  theme_bw() +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r ref.label='colors1'}
+```
+]
+
+---
+
+## Colors
+
+Colors can be mapped to aesthetics.
+
+.pull-left[
+```{r colors2, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(aes(color = species), method="lm") +
+  theme_bw() +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r ref.label='colors2'}
+```
+]
+
+---
+
+## Handling color palettes
+
+Color palettes can be created manually with *scale_color_manual()*
+
+.pull-left[
+```{r colors3, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(aes(color = species), method="lm") +
+  scale_color_manual(values = c("cornflowerblue", "goldenrod", "darkgreen")) +
+  theme_bw() +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r ref.label='colors3'}
+```
+]
+
+---
+
+## Handling color palettes
+
+Some packages offer custom *scale_** functions.
+
+.pull-left[
+```{r colors4, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(aes(color = species), method="lm") +
+  scale_color_viridis_d() +
+  theme_bw() +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r ref.label='colors4'}
+```
+]
+
+
+---
+
+## Handling color palettes - {colorspace}
+
+```{r echo=TRUE}
+colorspace::hcl_palettes(plot = TRUE)
+```
+
+---
+
+## Handling color palettes - {colorspace}
+
+.pull-left[
+```{r colors5, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(aes(color = species), method="lm") +
+  colorspace::scale_color_discrete_qualitative(palette = "Set 2") +
+  theme_bw() +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r ref.label='colors5'}
+```
+]
+
+
+---
+
+# Packages for color palettes - {ggsci}
+
+Color palettes inspired by scientific journals
+
+.panelset[
+.panel[.panel-name[Nature]
+.pull-left[
+```{r colors6, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(aes(color = species), method="lm") +
+  ggsci::scale_color_npg() +
+  theme_bw() +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r ref.label='colors6'}
+```
+]
+]
+
+.panel[.panel-name[AAAS]
+.pull-left[
+```{r colors7, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(aes(color = species), method="lm") +
+  ggsci::scale_color_aaas() +
+  theme_bw() +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r ref.label='colors7'}
+```
+]
+]
+
+.panel[.panel-name[NEJM]
+.pull-left[
+```{r colors8, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(aes(color = species), method="lm") +
+  ggsci::scale_color_nejm() +
+  theme_bw() +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r ref.label='colors8'}
+```
+]
+]
+
+.panel[.panel-name[JAMA]
+.pull-left[
+```{r colors9, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(aes(color = species), method="lm") +
+  ggsci::scale_color_jama() +
+  theme_bw() +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r ref.label='colors9'}
+```
+]
+]
+
+.panel[.panel-name[D3]
+.pull-left[
+```{r colors10, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(aes(color = species), method="lm") +
+  ggsci::scale_color_d3() +
+  theme_bw() +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r ref.label='colors10'}
+```
+]
+]
+
+.panel[.panel-name[UChicago]
+.pull-left[
+```{r colors11, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(aes(color = species), method="lm") +
+  ggsci::scale_color_uchicago() +
+  theme_bw() +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r ref.label='colors11'}
+```
+]
+]
+
+]
+
+---
+
+## Themes
+
+Themes can be modified with *theme_** functions. You can also create your own theme.
+
+.pull-left[
+```{r theme1, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(aes(color = species), method="lm") +
+  ggsci::scale_color_uchicago() +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r ref.label='theme1'}
+```
+]
+
+---
+
+## Themes
+
+Themes can be modified with *theme_** functions. You can also create your own theme.
+
+.pull-left[
+```{r theme2, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(aes(color = species), method="lm") +
+  ggsci::scale_color_uchicago() +
+  theme_bw() +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r ref.label='theme2'}
+```
+]
+
+---
+
+## Themes
+
+Themes can be modified with *theme_** functions. You can also create your own theme.
+
+.pull-left[
+```{r theme3, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(aes(color = species), method="lm") +
+  ggsci::scale_color_uchicago() +
+  theme_classic() +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r ref.label='theme3'}
+```
+]
+
+---
+
+## Themes
+
+Themes can be modified with *theme_** functions. You can also create your own theme.
+
+.pull-left[
+```{r theme4, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(aes(color = species), method="lm") +
+  ggsci::scale_color_uchicago() +
+  theme_minimal() +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r ref.label='theme4'}
+```
+]
+
+---
+
+## Themes
+
+Themes can be modified with *theme_** functions. You can also create your own theme.
+
+.pull-left[
+```{r theme5, echo=TRUE, eval=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(aes(color = species), method="lm") +
+  ggsci::scale_color_uchicago() +
+  theme_minimal() +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    axis.text = element_text(size = 14),
+    axis.title = element_text(size = 16, face = "bold"),
+    legend.text = element_text(size = 14),
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+```
+]
+.pull-right[
+```{r ref.label='theme5'}
+```
+]
+
+---
+
+## Combining plots into panels
+
+Use the *ggarrange()* function from the ggpubr package.
+
+```{r plots, echo=FALSE}
+p1 <- ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point(aes(color = species)) +
+  geom_smooth(aes(color = species), method="lm") +
+  ggsci::scale_color_uchicago() +
+  theme_minimal() +
+  labs(x="Bill length (mm)",
+       y="Body mass(g)",
+       color="Species") +
+  ggtitle("Bill length vs body mass per year") +
+  theme(
+    plot.title = element_text(size=13, hjust=0.5)
+  )
+
+p2 <- penguins %>%
+  filter(!is.na(sex)) %>%
+  ggplot(., aes(x=sex, y=body_mass_g)) +
+  geom_violin(aes(fill=sex), trim=FALSE, width=0.4, alpha=0.7) +
+  scale_fill_viridis_d() +
+  geom_boxplot(fill="white", width=0.1) +
+  facet_wrap(~species) +
+  theme_bw() +
+  labs(fill="Sex",
+       x="Species", y="Distribution of body mass (g)") +
+  ggtitle("Distribution of body mass for different sexes across species")
+
+p3 <- ggplot(penguins) +
+  geom_bar(aes(year, fill=species), position="dodge") +
+  labs(x="Year", y="Count") +
+  ggtitle("Frequency of penguins per year") +
+  scale_fill_viridis_d() +
+  labs(fill="Species") +
+  theme_bw()
+```
+
+.pull-left[
+```{r ggarrange, echo=TRUE, eval=FALSE}
+library(ggpubr)
+ggarrange(p1, p2, p3, nrow=3,
+          labels = c("A", "B", "C"))
+```
+]
+.pull-right[
+```{r ref.label='ggarrange'}
+```
+]
+
+---
+
+## Combining plots into panels
+
+Use the *ggarrange()* function from the ggpubr package.
+
+.pull-left[
+```{r ggarrange2, echo=TRUE, eval=FALSE}
+library(ggpubr)
+upper <- ggarrange(p1, p2, 
+                   labels = c("A", "B"))
+ggarrange(upper, p3, nrow=2,
+          labels = c("", "C"))
+```
+]
+.pull-right[
+```{r ref.label='ggarrange2'}
+```
+]
+
+---
+
+## Final challenge #1
+
+Reproduce this plot:
+
+```{r}
+library(ggtext)
+load(here::here("data", "case_study_1_tidy.rda"))
+hc %>%
+  filter(type == "Employer") %>% 
+  ggplot(aes(x = spending_capita, 
+             y = prop_coverage,
+             color = region)) + 
+  geom_point() + 
+  facet_wrap(~year) +
+  labs(x = "spending per capita",
+       y = "coverage proportion") +
+  geom_smooth(method = "lm", col = "red") + 
+  geom_text(aes(label=abb), 
+            nudge_x = 150, 
+            show.legend = FALSE)
+```
+
+---
+
+class: sydney-yellow, middle, center
+
+## Here's where you can find me:
+
+`r icons::fontawesome("twitter")`  [@almeidasilvaf](https://twitter.com/almeidasilvaf)
+
+`r icons::fontawesome("github")`  [almeidasilvaf](https://github.com/almeidasilvaf/)
+
+`r icons::fontawesome("globe")`  [almeidasilvaf.github.io/home](https://almeidasilvaf.github.io/home/)
+
+`r icons::fontawesome("envelope")`  [fabricio_almeidasilva@hotmail.com](mailto:fabricio_almeidasilva@hotmail.com)
+
+`r icons::academicons("orcid")`  [Fabricio Almeida-Silva](https://orcid.org/0000-0002-5314-2964)
+

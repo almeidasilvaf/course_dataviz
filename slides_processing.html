@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Processing and visualizing data in the tidyverse</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Fabrício de Almeida Silva @almeidasilvaf" />
+    <script src="libs/header-attrs-2.8/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset-0.2.6/panelset.js"></script>
+    <script src="libs/fabric-4.3.1/fabric.min.js"></script>
+    <link href="libs/xaringanExtra-scribble-0.0.1/scribble.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-scribble-0.0.1/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#FF0000"],"pen_size":3,"eraser_size":30}) })</script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="assets/venanciolab-fonts.css" type="text/css" />
+    <link rel="stylesheet" href="assets/venanciolab.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Processing and visualizing data in the tidyverse
+### Fabrício de Almeida Silva <span class="citation">@almeidasilvaf</span>
+### PGBV/UENF
+### May, 2021
+
+---
+
+
+
+
+
+
+background-image: url("https://www.tidyverse.org/images/hex-tidyverse.png")
+background-position: 95% 50%
+background-size: 35%
+
+## What is the tidyverse?
+
+&lt;br /&gt;
+
+.pull-left-2[
+A **collection of packages** designed for data science.
+
+All packages in the tidyverse share data structures and grammar.
+
+To install the whole tidyverse:
+
+
+```r
+install.packages("tidyverse")
+```
+
+Then, load it.
+
+
+```r
+library(tidyverse)
+```
+
+]
+
+
+---
+
+background-image: url("https://rviews.rstudio.com/post/2017-06-09-What-is-the-tidyverse_files/tidyverse1.png")
+background-position: 50% 80%
+background-size: 90%
+
+## Tidyverse overview
+
+---
+
+background-image: url("https://www.openscapes.org/img/blog/tidydata/tidydata_1.jpg")
+background-size: cover
+
+---
+
+background-image: url("https://www.openscapes.org/img/blog/tidydata/tidydata_2.jpg")
+background-size: cover
+
+---
+
+background-image: url("https://allisonhorst.github.io/palmerpenguins/reference/figures/lter_penguins.png")
+background-position: 50% 70%
+background-size: 80%
+
+## Meet the palmer penguins!
+
+---
+
+background-image: url("https://allisonhorst.github.io/palmerpenguins/reference/figures/culmen_depth.png")
+background-position: 50% 70%
+background-size: 80%
+
+---
+
+## Tibbles
+
+.panelset[
+.panel[.panel-name[Definition]
+Updated and stylish version of a data frame. Main differences between tibbles and data frames:
+
+- Input type remains unchanged
+
+- Variable names remain unchanged
+
+- There are no row.names() for a tibble
+
+- Tibbles print first ten rows and columns that fit on one screen
+]
+
+.panel[.panel-name[Examples]
+
+```r
+library(palmerpenguins)
+penguins
+```
+
+```
+## # A tibble: 344 x 8
+##    species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
+##    &lt;fct&gt;   &lt;fct&gt;              &lt;dbl&gt;         &lt;dbl&gt;             &lt;int&gt;       &lt;int&gt;
+##  1 Adelie  Torgersen           39.1          18.7               181        3750
+##  2 Adelie  Torgersen           39.5          17.4               186        3800
+##  3 Adelie  Torgersen           40.3          18                 195        3250
+##  4 Adelie  Torgersen           NA            NA                  NA          NA
+##  5 Adelie  Torgersen           36.7          19.3               193        3450
+##  6 Adelie  Torgersen           39.3          20.6               190        3650
+##  7 Adelie  Torgersen           38.9          17.8               181        3625
+##  8 Adelie  Torgersen           39.2          19.6               195        4675
+##  9 Adelie  Torgersen           34.1          18.1               193        3475
+## 10 Adelie  Torgersen           42            20.2               190        4250
+## # … with 334 more rows, and 2 more variables: sex &lt;fct&gt;, year &lt;int&gt;
+```
+]
+
+.panel[.panel-name[Creating a tibble]
+.pull-left[
+
+```r
+tibble(
+  Nome = c("Eduardo", "Juliana", "Roberta"),
+  Orientador = c("Fábio", "Clicia", "Vanildo"),
+  Idade = c(25, 24, 24)
+)
+```
+]
+
+.pull-right[
+
+```
+## # A tibble: 3 x 3
+##   Nome    Orientador Idade
+##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt;
+## 1 Eduardo Fábio         25
+## 2 Juliana Clicia        24
+## 3 Roberta Vanildo       24
+```
+]
+]
+
+.panel[.panel-name[Convert to tibble]
+
+```r
+as_tibble(trees)
+```
+
+```
+## # A tibble: 31 x 3
+##    Girth Height Volume
+##    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1   8.3     70   10.3
+##  2   8.6     65   10.3
+##  3   8.8     63   10.2
+##  4  10.5     72   16.4
+##  5  10.7     81   18.8
+##  6  10.8     83   19.7
+##  7  11       66   15.6
+##  8  11       75   18.2
+##  9  11.1     80   22.6
+## 10  11.2     75   19.9
+## # … with 21 more rows
+```
+]
+
+.panel[.panel-name[Inspecting]
+
+```r
+slice_sample(penguins, n=5)
+```
+
+```
+## # A tibble: 5 x 8
+##   species island bill_length_mm bill_depth_mm flipper_length_… body_mass_g sex  
+##   &lt;fct&gt;   &lt;fct&gt;           &lt;dbl&gt;         &lt;dbl&gt;            &lt;int&gt;       &lt;int&gt; &lt;fct&gt;
+## 1 Gentoo  Biscoe           51.3          14.2              218        5300 male 
+## 2 Gentoo  Biscoe           47.3          13.8              216        4725 &lt;NA&gt; 
+## 3 Chinst… Dream            48.1          16.4              199        3325 fema…
+## 4 Chinst… Dream            45.7          17.3              193        3600 fema…
+## 5 Chinst… Dream            45.4          18.7              188        3525 fema…
+## # … with 1 more variable: year &lt;int&gt;
+```
+
+Other options: `slice_head()` and `slice_tail()`.
+]
+
+.panel[.panel-name[Subsetting]
+
+```r
+head(penguins$species)
+```
+
+```
+## [1] Adelie Adelie Adelie Adelie Adelie Adelie
+## Levels: Adelie Chinstrap Gentoo
+```
+
+```r
+penguins[1, ]
+```
+
+```
+## # A tibble: 1 x 8
+##   species island bill_length_mm bill_depth_mm flipper_length_… body_mass_g sex  
+##   &lt;fct&gt;   &lt;fct&gt;           &lt;dbl&gt;         &lt;dbl&gt;            &lt;int&gt;       &lt;int&gt; &lt;fct&gt;
+## 1 Adelie  Torge…           39.1          18.7              181        3750 male 
+## # … with 1 more variable: year &lt;int&gt;
+```
+]
+]
+
+---
+
+class: inverse, center, middle
+
+# Importing and exporting data
+
+---
+
+## Importing and exporting data
+
+.panelset[
+.panel[.panel-name[Spreadsheets]
+
+```r
+library(readxl)
+read_excel(readxl_example("deaths.xlsx"),
+  range = "arts!A5:F8",
+  .name_repair = "unique")
+```
+
+```
+## # A tibble: 3 x 6
+##   Name       Profession   Age `Has kids` `Date of birth`     `Date of death`    
+##   &lt;chr&gt;      &lt;chr&gt;      &lt;dbl&gt; &lt;lgl&gt;      &lt;dttm&gt;              &lt;dttm&gt;             
+## 1 David Bow… musician      69 TRUE       1947-01-08 00:00:00 2016-01-10 00:00:00
+## 2 Carrie Fi… actor         60 TRUE       1956-10-21 00:00:00 2016-12-27 00:00:00
+## 3 Chuck Ber… musician      90 TRUE       1926-10-18 00:00:00 2017-03-18 00:00:00
+```
+
+Important arguments: 
+- sheet: name of the sheet to import
+- col_names: names for columns. By default, it is the first row.
+]
+
+.panel[.panel-name[CSVs]
+**CSV** stands for **comma-separated values**.
+
+
+```r
+pokemon &lt;- read_csv("https://gist.githubusercontent.com/armgilles/194bcff35001e7eb53a2a8b441e8b2c6/raw/92200bc0a673d5ce2110aaad4544ed6c4010f687/pokemon.csv")
+head(pokemon, n=5)
+```
+
+```
+## # A tibble: 5 x 13
+##     `#` Name    `Type 1` `Type 2` Total    HP Attack Defense `Sp. Atk` `Sp. Def`
+##   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1     1 Bulbas… Grass    Poison     318    45     49      49        65        65
+## 2     2 Ivysaur Grass    Poison     405    60     62      63        80        80
+## 3     3 Venusa… Grass    Poison     525    80     82      83       100       100
+## 4     3 Venusa… Grass    Poison     625    80    100     123       122       120
+## 5     4 Charma… Fire     &lt;NA&gt;       309    39     52      43        60        50
+## # … with 3 more variables: Speed &lt;dbl&gt;, Generation &lt;dbl&gt;, Legendary &lt;lgl&gt;
+```
+]
+
+.panel[.panel-name[TSVs]
+**TSV** stands for **tab-separated values**.
+
+
+```r
+xmas &lt;- read_tsv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-12-24/christmas_lyrics.tsv")
+head(xmas, n=5)
+```
+
+```
+## # A tibble: 5 x 8
+##   title    artist   songid       weekid track_title  track_n  line lyric        
+##   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
+## 1 JINGLE … Bobby H… Jingle Bell… 12/20… Jingle Bell…       1     1 Jingle bell,…
+## 2 JINGLE … Bobby H… Jingle Bell… 12/20… Jingle Bell…       1     2 Jingle bells…
+## 3 JINGLE … Bobby H… Jingle Bell… 12/20… Jingle Bell…       1     3 Snowin' and …
+## 4 JINGLE … Bobby H… Jingle Bell… 12/20… Jingle Bell…       1     4 Now, the jin…
+## 5 JINGLE … Bobby H… Jingle Bell… 12/20… Jingle Bell…       1     5 Jingle bell,…
+```
+]
+
+.panel[.panel-name[Delimited files]
+
+```r
+xmas &lt;- read_delim("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-12-24/christmas_lyrics.tsv",
+                 delim="\t")
+head(xmas, n=5)
+```
+
+```
+## # A tibble: 5 x 8
+##   title    artist   songid       weekid track_title  track_n  line lyric        
+##   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
+## 1 JINGLE … Bobby H… Jingle Bell… 12/20… Jingle Bell…       1     1 Jingle bell,…
+## 2 JINGLE … Bobby H… Jingle Bell… 12/20… Jingle Bell…       1     2 Jingle bells…
+## 3 JINGLE … Bobby H… Jingle Bell… 12/20… Jingle Bell…       1     3 Snowin' and …
+## 4 JINGLE … Bobby H… Jingle Bell… 12/20… Jingle Bell…       1     4 Now, the jin…
+## 5 JINGLE … Bobby H… Jingle Bell… 12/20… Jingle Bell…       1     5 Jingle bell,…
+```
+]
+
+.panel[.panel-name[Exporting]
+
+To export data, use the `write_` functions. Example:
+
+
+```r
+write_csv(xmas, file="christmas_songs.csv") # CSV
+write_tsv(xmas, file="christmas_songs.tsv") # TSV
+write_delim(xmas, file="christmas_songs.txt", delim=" ") # Space-separated
+```
+]
+]
+
+---
+
+class: inverse, center, middle
+
+# Data processing
+
+---
+
+## Reshaping data
+
+.panelset[
+.panel[.panel-name[Wide and long data]
+&lt;img src="https://thinkr.fr/wp-content/uploads/long_wide.png" style="display: block; margin: auto;" /&gt;
+]
+
+.panel[.panel-name[Raw data]
+
+```r
+airquality &lt;- as_tibble(airquality)
+airquality
+```
+
+```
+## # A tibble: 153 x 6
+##    Ozone Solar.R  Wind  Temp Month   Day
+##    &lt;int&gt;   &lt;int&gt; &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+##  1    41     190   7.4    67     5     1
+##  2    36     118   8      72     5     2
+##  3    12     149  12.6    74     5     3
+##  4    18     313  11.5    62     5     4
+##  5    NA      NA  14.3    56     5     5
+##  6    28      NA  14.9    66     5     6
+##  7    23     299   8.6    65     5     7
+##  8    19      99  13.8    59     5     8
+##  9     8      19  20.1    61     5     9
+## 10    NA     194   8.6    69     5    10
+## # … with 143 more rows
+```
+]
+
+.panel[.panel-name[pivot_longer() and pivot_wider()]
+
+```r
+gathered &lt;- airquality %&gt;%
+  pivot_longer(everything())
+
+head(gathered)
+```
+
+```
+## # A tibble: 6 x 2
+##   name    value
+##   &lt;chr&gt;   &lt;dbl&gt;
+## 1 Ozone    41  
+## 2 Solar.R 190  
+## 3 Wind      7.4
+## 4 Temp     67  
+## 5 Month     5  
+## 6 Day       1
+```
+
+To revert to wide format, use `pivot_wider()`.
+]
+]
+
+---
+
+## Wrangling data
+
+.panelset[
+
+.panel[.panel-name[filter()]
+
+.pull-left-1[
+Filter by 1 condition:
+
+
+```r
+penguins %&gt;%
+  filter(sex == "female") %&gt;%
+  head(n=3)
+```
+
+Filter by 2+ conditions:
+
+
+```r
+penguins %&gt;%
+  filter(sex == "female", body_mass_g &gt; 3500) %&gt;%
+  head(n=3)
+```
+]
+
+.pull-right-2[
+
+```
+## # A tibble: 3 x 8
+##   species island bill_length_mm bill_depth_mm flipper_length_… body_mass_g sex  
+##   &lt;fct&gt;   &lt;fct&gt;           &lt;dbl&gt;         &lt;dbl&gt;            &lt;int&gt;       &lt;int&gt; &lt;fct&gt;
+## 1 Adelie  Torge…           39.5          17.4              186        3800 fema…
+## 2 Adelie  Torge…           40.3          18                195        3250 fema…
+## 3 Adelie  Torge…           36.7          19.3              193        3450 fema…
+## # … with 1 more variable: year &lt;int&gt;
+```
+
+
+```
+## # A tibble: 3 x 8
+##   species island bill_length_mm bill_depth_mm flipper_length_… body_mass_g sex  
+##   &lt;fct&gt;   &lt;fct&gt;           &lt;dbl&gt;         &lt;dbl&gt;            &lt;int&gt;       &lt;int&gt; &lt;fct&gt;
+## 1 Adelie  Torge…           39.5          17.4              186        3800 fema…
+## 2 Adelie  Torge…           40.3          18                195        3250 fema…
+## 3 Adelie  Torge…           36.7          19.3              193        3450 fema…
+## # … with 1 more variable: year &lt;int&gt;
+```
+
+]
+
+
+]
+
+.panel[.panel-name[select()]
+
+```r
+penguins %&gt;%
+  filter(species == "Adelie") %&gt;%
+  select(bill_length_mm, bill_depth_mm)
+```
+
+```
+## # A tibble: 152 x 2
+##    bill_length_mm bill_depth_mm
+##             &lt;dbl&gt;         &lt;dbl&gt;
+##  1           39.1          18.7
+##  2           39.5          17.4
+##  3           40.3          18  
+##  4           NA            NA  
+##  5           36.7          19.3
+##  6           39.3          20.6
+##  7           38.9          17.8
+##  8           39.2          19.6
+##  9           34.1          18.1
+## 10           42            20.2
+## # … with 142 more rows
+```
+]
+
+.panel[.panel-name[arrange()]
+.pull-left-1[
+
+Sort in ascending order.
+
+
+```r
+penguins %&gt;%
+  select(species, bill_length_mm, year) %&gt;%
+  arrange(bill_length_mm) %&gt;%
+  head(n=3)
+```
+
+Sort in descending, then ascending order.
+
+
+```r
+penguins %&gt;%
+  select(species, bill_length_mm, bill_depth_mm, year) %&gt;%
+  arrange(-bill_length_mm, bill_depth_mm) %&gt;%
+  head(n=3)
+```
+]
+
+.pull-right-2[
+
+```
+## # A tibble: 3 x 3
+##   species bill_length_mm  year
+##   &lt;fct&gt;            &lt;dbl&gt; &lt;int&gt;
+## 1 Adelie            32.1  2009
+## 2 Adelie            33.1  2008
+## 3 Adelie            33.5  2008
+```
+
+
+```
+## # A tibble: 3 x 4
+##   species   bill_length_mm bill_depth_mm  year
+##   &lt;fct&gt;              &lt;dbl&gt;         &lt;dbl&gt; &lt;int&gt;
+## 1 Gentoo              59.6          17    2007
+## 2 Chinstrap           58            17.8  2007
+## 3 Gentoo              55.9          17    2009
+```
+]
+]
+
+.panel[.panel-name[mutate()]
+
+
+```r
+penguins %&gt;%
+  select(species, island, bill_length_mm, bill_depth_mm) %&gt;%
+  mutate(length_times_depth = bill_length_mm * bill_depth_mm)
+```
+
+```
+## # A tibble: 344 x 5
+##    species island    bill_length_mm bill_depth_mm length_times_depth
+##    &lt;fct&gt;   &lt;fct&gt;              &lt;dbl&gt;         &lt;dbl&gt;              &lt;dbl&gt;
+##  1 Adelie  Torgersen           39.1          18.7               731.
+##  2 Adelie  Torgersen           39.5          17.4               687.
+##  3 Adelie  Torgersen           40.3          18                 725.
+##  4 Adelie  Torgersen           NA            NA                  NA 
+##  5 Adelie  Torgersen           36.7          19.3               708.
+##  6 Adelie  Torgersen           39.3          20.6               810.
+##  7 Adelie  Torgersen           38.9          17.8               692.
+##  8 Adelie  Torgersen           39.2          19.6               768.
+##  9 Adelie  Torgersen           34.1          18.1               617.
+## 10 Adelie  Torgersen           42            20.2               848.
+## # … with 334 more rows
+```
+]
+
+.panel[.panel-name[separate()]
+
+
+
+.pull-left-2[
+
+```r
+# Show original data
+head(conservation, n=3)
+
+# Separate columns
+sep &lt;- conservation %&gt;%
+  separate(`conservation abbreviation`, 
+           into = c("abbreviation", "description"), sep = " = ") %&gt;%
+  head(n=3)
+sep
+```
+]
+
+.pull-right-1[
+
+```
+## # A tibble: 3 x 1
+##   `conservation abbreviation`
+##   &lt;chr&gt;                      
+## 1 EX = Extinct               
+## 2 EW = Extinct in the wild   
+## 3 CR = Critically Endangered
+```
+
+```
+## # A tibble: 3 x 2
+##   abbreviation description          
+##   &lt;chr&gt;        &lt;chr&gt;                
+## 1 EX           Extinct              
+## 2 EW           Extinct in the wild  
+## 3 CR           Critically Endangered
+```
+]
+
+]
+
+.panel[.panel-name[unite()]
+
+```r
+sep %&gt;%
+  unite(united_col, abbreviation, description, sep = " = ") %&gt;%
+  head(n=3)
+```
+
+```
+## # A tibble: 3 x 1
+##   united_col                
+##   &lt;chr&gt;                     
+## 1 EX = Extinct              
+## 2 EW = Extinct in the wild  
+## 3 CR = Critically Endangered
+```
+]
+
+.panel[.panel-name[clean_names()]
+
+```r
+library(janitor)
+conservation %&gt;%
+  clean_names()
+```
+
+```
+## # A tibble: 11 x 1
+##    conservation_abbreviation                    
+##    &lt;chr&gt;                                        
+##  1 EX = Extinct                                 
+##  2 EW = Extinct in the wild                     
+##  3 CR = Critically Endangered                   
+##  4 EN = Endangered                              
+##  5 VU = Vulnerable                              
+##  6 NT = Near Threatened                         
+##  7 LC = Least Concern                           
+##  8 DD = Data deficient                          
+##  9 NE = Not evaluated                           
+## 10 PE = Probably extinct (informal)             
+## 11 PEW = Probably extinct in the wild (informal)
+```
+]
+
+]
+
+---
+
+background-image: url("https://media.giphy.com/media/ZVik7pBtu9dNS/giphy.gif")
+background-position: 5% 50%
+background-size: 35%
+
+## Exercise #1
+
+.pull-right-2[
+Filter the `penguins` data set to keep only female penguins from species "Adelie"
+and sort them by bill length in ascending order.
+
+- What are the first 3 values for `bill_length_mm`?
+
+- From which island are the top 3 Adelie penguins with the smallest bill?
+]
+
+---
+
+background-image: url("https://media.giphy.com/media/ZVik7pBtu9dNS/giphy.gif")
+background-position: 5% 50%
+background-size: 35%
+
+## Exercise #2
+
+.pull-right-2[
+Filter the `penguins` data set to remove observations from the year 2007. Then, select only the columns `species`, `sex`, and `body_mass_g`. Finally, create a new column named `body_mass_kg` with the body mass represented in kilograms and sort this column in descending order.
+
+- What are weights (in kg) of the 5 heaviest penguins?
+
+- What are their species?
+
+- What are their sexes?
+
+]
+
+
+---
+
+background-image: url("https://media.giphy.com/media/ZVik7pBtu9dNS/giphy.gif")
+background-position: 5% 50%
+background-size: 35%
+
+## Exercise #3
+
+.pull-right-2[
+&lt;br /&gt;
+
+- How many penguins have flipper length between 200 and 215 mm?
+
+**Tip:** you can use the `count()` or the `nrow()` function to count.
+]
+
+---
+
+background-image: url("https://data-lessons.github.io/gapminder-R/fig/dplyr-joins.png")
+background-size: 60%
+
+## Joins
+
+---
+
+background-image: url("https://github.com/gadenbuie/tidyexplain/raw/master/images/inner-join.gif")
+background-size: 60%
+
+## Joins
+
+---
+
+background-image: url("httpshttps://github.com/gadenbuie/tidyexplain/raw/master/images/left-join.gif")
+background-size: 60%
+
+## Joins
+
+---
+
+background-image: url("https://github.com/gadenbuie/tidyexplain/raw/master/images/left-join-extra.gif")
+background-size: 60%
+
+## Joins
+
+---
+
+background-image: url("https://github.com/gadenbuie/tidyexplain/raw/master/images/right-join.gif")
+background-size: 60%
+
+## Joins
+
+---
+
+background-image: url("https://github.com/gadenbuie/tidyexplain/raw/master/images/full-join.gif")
+background-size: 60%
+
+## Joins
+
+---
+
+## Joining data
+
+.panelset[
+
+.panel[.panel-name[The data]
+
+
+.pull-left[
+
+```r
+superheroes
+```
+
+```
+## # A tibble: 7 x 4
+##   name     alignment gender publisher        
+##   &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;            
+## 1 Magneto  bad       male   Marvel           
+## 2 Storm    good      female Marvel           
+## 3 Mystique bad       female Marvel           
+## 4 Batman   good      male   DC               
+## 5 Joker    bad       male   DC               
+## 6 Catwoman bad       female DC               
+## 7 Hellboy  good      male   Dark Horse Comics
+```
+]
+
+.pull-right[
+
+```r
+publishers
+```
+
+```
+## # A tibble: 3 x 2
+##   publisher yr_founded
+##   &lt;chr&gt;          &lt;int&gt;
+## 1 DC              1934
+## 2 Marvel          1939
+## 3 Image           1992
+```
+]
+]
+
+.panel[.panel-name[inner_join()]
+
+```r
+inner_join(superheroes, publishers)
+```
+
+```
+## # A tibble: 6 x 5
+##   name     alignment gender publisher yr_founded
+##   &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;          &lt;int&gt;
+## 1 Magneto  bad       male   Marvel          1939
+## 2 Storm    good      female Marvel          1939
+## 3 Mystique bad       female Marvel          1939
+## 4 Batman   good      male   DC              1934
+## 5 Joker    bad       male   DC              1934
+## 6 Catwoman bad       female DC              1934
+```
+]
+
+.panel[.panel-name[semi_join()]
+
+```r
+semi_join(superheroes, publishers)
+```
+
+```
+## # A tibble: 6 x 4
+##   name     alignment gender publisher
+##   &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;    
+## 1 Magneto  bad       male   Marvel   
+## 2 Storm    good      female Marvel   
+## 3 Mystique bad       female Marvel   
+## 4 Batman   good      male   DC       
+## 5 Joker    bad       male   DC       
+## 6 Catwoman bad       female DC
+```
+]
+
+.panel[.panel-name[left_join()]
+
+```r
+left_join(superheroes, publishers)
+```
+
+```
+## # A tibble: 7 x 5
+##   name     alignment gender publisher         yr_founded
+##   &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;                  &lt;int&gt;
+## 1 Magneto  bad       male   Marvel                  1939
+## 2 Storm    good      female Marvel                  1939
+## 3 Mystique bad       female Marvel                  1939
+## 4 Batman   good      male   DC                      1934
+## 5 Joker    bad       male   DC                      1934
+## 6 Catwoman bad       female DC                      1934
+## 7 Hellboy  good      male   Dark Horse Comics         NA
+```
+]
+
+.panel[.panel-name[anti_join()]
+
+```r
+anti_join(superheroes, publishers)
+```
+
+```
+## # A tibble: 1 x 4
+##   name    alignment gender publisher        
+##   &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;            
+## 1 Hellboy good      male   Dark Horse Comics
+```
+]
+
+.panel[.panel-name[full_join()]
+
+```r
+full_join(superheroes, publishers)
+```
+
+```
+## # A tibble: 8 x 5
+##   name     alignment gender publisher         yr_founded
+##   &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;                  &lt;int&gt;
+## 1 Magneto  bad       male   Marvel                  1939
+## 2 Storm    good      female Marvel                  1939
+## 3 Mystique bad       female Marvel                  1939
+## 4 Batman   good      male   DC                      1934
+## 5 Joker    bad       male   DC                      1934
+## 6 Catwoman bad       female DC                      1934
+## 7 Hellboy  good      male   Dark Horse Comics         NA
+## 8 &lt;NA&gt;     &lt;NA&gt;      &lt;NA&gt;   Image                   1992
+```
+]
+]
+
+---
+
+## Summarizing data
+
+.panelset[
+
+.panel[.panel-name[summarize()]
+.pull-left-1[
+
+```r
+head(msleep)
+msleep %&gt;%
+  select(genus) %&gt;%
+  summarize(N=n())
+```
+]
+
+.pull-right-2[
+
+```
+## # A tibble: 6 x 11
+##   name    genus vore  order conservation sleep_total sleep_rem sleep_cycle awake
+##   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;
+## 1 Cheetah Acin… carni Carn… lc                  12.1      NA        NA      11.9
+## 2 Owl mo… Aotus omni  Prim… &lt;NA&gt;                17         1.8      NA       7  
+## 3 Mounta… Aplo… herbi Rode… nt                  14.4       2.4      NA       9.6
+## 4 Greate… Blar… omni  Sori… lc                  14.9       2.3       0.133   9.1
+## 5 Cow     Bos   herbi Arti… domesticated         4         0.7       0.667  20  
+## 6 Three-… Brad… herbi Pilo… &lt;NA&gt;                14.4       2.2       0.767   9.6
+## # … with 2 more variables: brainwt &lt;dbl&gt;, bodywt &lt;dbl&gt;
+```
+
+```
+## # A tibble: 1 x 1
+##       N
+##   &lt;int&gt;
+## 1    83
+```
+]
+]
+
+.panel[.panel-name[group_by() [1]]
+.pull-left[
+
+```r
+msleep %&gt;%
+  group_by(order) %&gt;% 
+  select(order) %&gt;%
+  summarize(N=n())
+```
+]
+
+.pull-right[
+
+```
+## # A tibble: 19 x 2
+##    order               N
+##    &lt;chr&gt;           &lt;int&gt;
+##  1 Afrosoricida        1
+##  2 Artiodactyla        6
+##  3 Carnivora          12
+##  4 Cetacea             3
+##  5 Chiroptera          2
+##  6 Cingulata           2
+##  7 Didelphimorphia     2
+##  8 Diprotodontia       2
+##  9 Erinaceomorpha      2
+## 10 Hyracoidea          3
+## 11 Lagomorpha          1
+## 12 Monotremata         1
+## 13 Perissodactyla      3
+## 14 Pilosa              1
+## 15 Primates           12
+## 16 Proboscidea         2
+## 17 Rodentia           22
+## 18 Scandentia          1
+## 19 Soricomorpha        5
+```
+]
+]
+
+.panel[.panel-name[group_by() [2]]
+.pull-left[
+
+```r
+msleep %&gt;%
+  group_by(order) %&gt;% 
+  select(order, sleep_total) %&gt;%
+  summarize(N=n(), mean_sleep=mean(sleep_total))
+```
+]
+
+.pull-right[
+
+```
+## # A tibble: 19 x 3
+##    order               N mean_sleep
+##    &lt;chr&gt;           &lt;int&gt;      &lt;dbl&gt;
+##  1 Afrosoricida        1      15.6 
+##  2 Artiodactyla        6       4.52
+##  3 Carnivora          12      10.1 
+##  4 Cetacea             3       4.5 
+##  5 Chiroptera          2      19.8 
+##  6 Cingulata           2      17.8 
+##  7 Didelphimorphia     2      18.7 
+##  8 Diprotodontia       2      12.4 
+##  9 Erinaceomorpha      2      10.2 
+## 10 Hyracoidea          3       5.67
+## 11 Lagomorpha          1       8.4 
+## 12 Monotremata         1       8.6 
+## 13 Perissodactyla      3       3.47
+## 14 Pilosa              1      14.4 
+## 15 Primates           12      10.5 
+## 16 Proboscidea         2       3.6 
+## 17 Rodentia           22      12.5 
+## 18 Scandentia          1       8.9 
+## 19 Soricomorpha        5      11.1
+```
+]
+]
+
+.panel[.panel-name[count()]
+.pull-left[
+
+```r
+msleep %&gt;%
+  count(vore, order)
+```
+]
+
+.pull-right[
+
+```
+## # A tibble: 32 x 3
+##    vore  order               n
+##    &lt;chr&gt; &lt;chr&gt;           &lt;int&gt;
+##  1 carni Carnivora          12
+##  2 carni Cetacea             3
+##  3 carni Cingulata           1
+##  4 carni Didelphimorphia     1
+##  5 carni Primates            1
+##  6 carni Rodentia            1
+##  7 herbi Artiodactyla        5
+##  8 herbi Diprotodontia       1
+##  9 herbi Hyracoidea          2
+## 10 herbi Lagomorpha          1
+## # … with 22 more rows
+```
+]
+]
+
+.panel[.panel-name[tabyl()]
+.pull-left[
+
+```r
+msleep %&gt;%
+  tabyl(order)
+```
+]
+
+.pull-right[
+
+```
+##            order  n    percent
+##     Afrosoricida  1 0.01204819
+##     Artiodactyla  6 0.07228916
+##        Carnivora 12 0.14457831
+##          Cetacea  3 0.03614458
+##       Chiroptera  2 0.02409639
+##        Cingulata  2 0.02409639
+##  Didelphimorphia  2 0.02409639
+##    Diprotodontia  2 0.02409639
+##   Erinaceomorpha  2 0.02409639
+##       Hyracoidea  3 0.03614458
+##       Lagomorpha  1 0.01204819
+##      Monotremata  1 0.01204819
+##   Perissodactyla  3 0.03614458
+##           Pilosa  1 0.01204819
+##         Primates 12 0.14457831
+##      Proboscidea  2 0.02409639
+##         Rodentia 22 0.26506024
+##       Scandentia  1 0.01204819
+##     Soricomorpha  5 0.06024096
+```
+]
+]
+
+]
+
+---
+
+---
+
+background-image: url("https://media.giphy.com/media/ZVik7pBtu9dNS/giphy.gif")
+background-position: 5% 50%
+background-size: 35%
+
+## Exercise #4
+
+.pull-right-2[
+&lt;br /&gt;
+
+- For each species, what is the mean body mass **(in kg)** by sex?
+
+]
+
+---
+
+## Operations across() columns
+
+.panelset[
+.panel[.panel-name[Example 1]
+
+Use across() to apply a function to all (or user-defined) columns.
+
+.pull-left[
+
+```r
+head(airquality, n=3)
+airquality %&gt;%
+  summarize(across(Ozone:Temp, mean, na.rm = TRUE))
+```
+]
+.pull-right[
+
+```
+## # A tibble: 3 x 6
+##   Ozone Solar.R  Wind  Temp Month   Day
+##   &lt;int&gt;   &lt;int&gt; &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1    41     190   7.4    67     5     1
+## 2    36     118   8      72     5     2
+## 3    12     149  12.6    74     5     3
+```
+
+```
+## # A tibble: 1 x 4
+##   Ozone Solar.R  Wind  Temp
+##   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1  42.1    186.  9.96  77.9
+```
+]
+]
+
+.panel[.panel-name[Example 2]
+
+.pull-left[
+
+```r
+airquality %&gt;%
+  filter(across(Ozone:Temp, ~ !is.na(.)))
+```
+]
+.pull-right[
+
+```
+## # A tibble: 111 x 6
+##    Ozone Solar.R  Wind  Temp Month   Day
+##    &lt;int&gt;   &lt;int&gt; &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+##  1    41     190   7.4    67     5     1
+##  2    36     118   8      72     5     2
+##  3    12     149  12.6    74     5     3
+##  4    18     313  11.5    62     5     4
+##  5    23     299   8.6    65     5     7
+##  6    19      99  13.8    59     5     8
+##  7     8      19  20.1    61     5     9
+##  8    16     256   9.7    69     5    12
+##  9    11     290   9.2    66     5    13
+## 10    14     274  10.9    68     5    14
+## # … with 101 more rows
+```
+]
+]
+
+.panel[.panel-name[Example 3]
+
+.pull-left[
+
+```r
+airquality %&gt;%
+  mutate(across(Ozone:Temp, ~ replace_na(., 0)))
+```
+]
+.pull-right[
+
+```
+## # A tibble: 153 x 6
+##    Ozone Solar.R  Wind  Temp Month   Day
+##    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;int&gt;
+##  1    41     190   7.4    67     5     1
+##  2    36     118   8      72     5     2
+##  3    12     149  12.6    74     5     3
+##  4    18     313  11.5    62     5     4
+##  5     0       0  14.3    56     5     5
+##  6    28       0  14.9    66     5     6
+##  7    23     299   8.6    65     5     7
+##  8    19      99  13.8    59     5     8
+##  9     8      19  20.1    61     5     9
+## 10     0     194   8.6    69     5    10
+## # … with 143 more rows
+```
+]
+]
+]
+
+---
+
+## String manipulation with {stringr}
+
+.panelset[
+
+.panel[.panel-name[str_c()] .pull-left[
+
+```r
+msleep %&gt;%
+  mutate(name_genus = str_c(name, genus, "_")) %&gt;%
+  select(name_genus)
+```
+]
+.pull-right[
+
+```
+## # A tibble: 83 x 1
+##    name_genus                        
+##    &lt;chr&gt;                             
+##  1 CheetahAcinonyx_                  
+##  2 Owl monkeyAotus_                  
+##  3 Mountain beaverAplodontia_        
+##  4 Greater short-tailed shrewBlarina_
+##  5 CowBos_                           
+##  6 Three-toed slothBradypus_         
+##  7 Northern fur sealCallorhinus_     
+##  8 Vesper mouseCalomys_              
+##  9 DogCanis_                         
+## 10 Roe deerCapreolus_                
+## # … with 73 more rows
+```
+]
+]
+
+.panel[.panel-name[str_sub()]
+
+```r
+genes &lt;- c("Glyma.15G026400.1", "Glyma.15G026400.2", "Glyma.15G026400.3")
+str_sub(genes, 1, 15)
+```
+
+```
+## [1] "Glyma.15G026400" "Glyma.15G026400" "Glyma.15G026400"
+```
+]
+
+.panel[.panel-name[str_detect()]
+
+```r
+genes &lt;- c("AT2G25880", "AT2G45490", "Achn130491", "ATR0705G186", "ATR0705G186")
+genes[str_detect(genes, "^AT[0-9]+")]
+```
+
+```
+## [1] "AT2G25880" "AT2G45490"
+```
+]
+
+.panel[.panel-name[str_replace()]
+
+```r
+genes &lt;- c("Glyma.15G026400.1", "Glyma.15G026400.2", "Glyma.15G026400.3")
+str_replace(genes, "\\.[0-9]$", "")
+```
+
+```
+## [1] "Glyma.15G026400" "Glyma.15G026400" "Glyma.15G026400"
+```
+]
+]
+
+---
+
+background-image: url("https://media.giphy.com/media/fCU27lxFIsDaRhKCe2/giphy.gif")
+background-position: 5% 50%
+background-size: 35%
+
+## Exercise #5
+
+.pull-right-2[
+&lt;br /&gt;
+
+Load the Netflix titles data set and find the shows/movies starring Millie Bobby Brown.
+
+- How many are they?
+
+- What are their names?
+
+Link [here](https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-04-20/netflix_titles.csv).
+
+]
+
+---
+
+background-image: url("https://media.giphy.com/media/ZVik7pBtu9dNS/giphy.gif")
+background-position: 5% 50%
+background-size: 35%
+
+## Exercise #6
+
+.pull-right-2[
+&lt;br /&gt;
+
+From the netflix title data set, count the number of titles per country.
+
+- What are the top 3 countries with the largest number of movies/shows?
+
+- Where is Brazil in this ranking?
+
+**Tip:** you will need the separate_rows() function.
+]
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"navigation": {
+"scroll": false
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

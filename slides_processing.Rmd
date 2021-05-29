@@ -1,0 +1,787 @@
+---
+title: "Processing and visualizing data in the tidyverse"
+author: "Fabrício de Almeida Silva  @almeidasilvaf"
+institute: "PGBV/UENF"
+date: "May, 2021"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: ["default", "assets/venanciolab-fonts.css", "assets/venanciolab.css"]
+    self_contained: false
+    seal: true
+    nature:
+      ratio: "16:9"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: "https://platform.twitter.com/widgets.js"
+      navigation:
+        scroll: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE, warning = FALSE, message = FALSE,
+  fig.width = 7, fig.height = 6, fig.align='center'
+)
+options(htmltools.dir.version = TRUE)
+```
+
+```{r extra}
+xaringanExtra::use_panelset()
+xaringanExtra::use_scribble()
+xaringanExtra::use_tile_view()
+```
+
+background-image: url("https://www.tidyverse.org/images/hex-tidyverse.png")
+background-position: 95% 50%
+background-size: 35%
+
+## What is the tidyverse?
+
+<br />
+
+.pull-left-2[
+A **collection of packages** designed for data science.
+
+All packages in the tidyverse share data structures and grammar.
+
+To install the whole tidyverse:
+
+```{r install_tidyverse, echo=TRUE, eval=FALSE}
+install.packages("tidyverse")
+```
+
+Then, load it.
+
+```{r load_tidyverse, echo=TRUE}
+library(tidyverse)
+```
+
+]
+
+
+---
+
+background-image: url("https://rviews.rstudio.com/post/2017-06-09-What-is-the-tidyverse_files/tidyverse1.png")
+background-position: 50% 80%
+background-size: 90%
+
+## Tidyverse overview
+
+---
+
+background-image: url("https://www.openscapes.org/img/blog/tidydata/tidydata_1.jpg")
+background-size: cover
+
+---
+
+background-image: url("https://www.openscapes.org/img/blog/tidydata/tidydata_2.jpg")
+background-size: cover
+
+---
+
+background-image: url("https://allisonhorst.github.io/palmerpenguins/reference/figures/lter_penguins.png")
+background-position: 50% 70%
+background-size: 80%
+
+## Meet the palmer penguins!
+
+---
+
+background-image: url("https://allisonhorst.github.io/palmerpenguins/reference/figures/culmen_depth.png")
+background-position: 50% 70%
+background-size: 80%
+
+---
+
+## Tibbles
+
+.panelset[
+.panel[.panel-name[Definition]
+Updated and stylish version of a data frame. Main differences between tibbles and data frames:
+
+- Input type remains unchanged
+
+- Variable names remain unchanged
+
+- There are no row.names() for a tibble
+
+- Tibbles print first ten rows and columns that fit on one screen
+]
+
+.panel[.panel-name[Examples]
+```{r tibble_example, echo=TRUE}
+library(palmerpenguins)
+penguins
+```
+]
+
+.panel[.panel-name[Creating a tibble]
+.pull-left[
+```{r create_tibble, echo=TRUE, eval=FALSE}
+tibble(
+  Nome = c("Eduardo", "Juliana", "Roberta"),
+  Orientador = c("Fábio", "Clicia", "Vanildo"),
+  Idade = c(25, 24, 24)
+)
+```
+]
+
+.pull-right[
+```{r show_create_tibble, ref.label="create_tibble"}
+```
+]
+]
+
+.panel[.panel-name[Convert to tibble]
+```{r convert_tibble, echo=TRUE}
+as_tibble(trees)
+```
+]
+
+.panel[.panel-name[Inspecting]
+```{r echo=TRUE}
+slice_sample(penguins, n=5)
+```
+
+Other options: `slice_head()` and `slice_tail()`.
+]
+
+.panel[.panel-name[Subsetting]
+```{r subsetting, echo=TRUE}
+head(penguins$species)
+penguins[1, ]
+```
+]
+]
+
+---
+
+class: inverse, center, middle
+
+# Importing and exporting data
+
+---
+
+## Importing and exporting data
+
+.panelset[
+.panel[.panel-name[Spreadsheets]
+```{r read_excel, echo=TRUE}
+library(readxl)
+read_excel(readxl_example("deaths.xlsx"),
+  range = "arts!A5:F8",
+  .name_repair = "unique")
+```
+
+Important arguments: 
+- sheet: name of the sheet to import
+- col_names: names for columns. By default, it is the first row.
+]
+
+.panel[.panel-name[CSVs]
+**CSV** stands for **comma-separated values**.
+
+```{r read_csv, echo=TRUE}
+pokemon <- read_csv("https://gist.githubusercontent.com/armgilles/194bcff35001e7eb53a2a8b441e8b2c6/raw/92200bc0a673d5ce2110aaad4544ed6c4010f687/pokemon.csv")
+head(pokemon, n=5)
+```
+]
+
+.panel[.panel-name[TSVs]
+**TSV** stands for **tab-separated values**.
+
+```{r read_tsv, echo=TRUE}
+xmas <- read_tsv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-12-24/christmas_lyrics.tsv")
+head(xmas, n=5)
+```
+]
+
+.panel[.panel-name[Delimited files]
+```{r read_delim, echo=TRUE}
+xmas <- read_delim("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-12-24/christmas_lyrics.tsv",
+                 delim="\t")
+head(xmas, n=5)
+```
+]
+
+.panel[.panel-name[Exporting]
+
+To export data, use the `write_` functions. Example:
+
+```{r export, echo=TRUE, eval=FALSE}
+write_csv(xmas, file="christmas_songs.csv") # CSV
+write_tsv(xmas, file="christmas_songs.tsv") # TSV
+write_delim(xmas, file="christmas_songs.txt", delim=" ") # Space-separated
+```
+]
+]
+
+---
+
+class: inverse, center, middle
+
+# Data processing
+
+---
+
+## Reshaping data
+
+.panelset[
+.panel[.panel-name[Wide and long data]
+```{r wide_long}
+knitr::include_graphics("https://thinkr.fr/wp-content/uploads/long_wide.png")
+```
+]
+
+.panel[.panel-name[Raw data]
+```{r raw_data, echo=TRUE}
+airquality <- as_tibble(airquality)
+airquality
+```
+]
+
+.panel[.panel-name[pivot_longer() and pivot_wider()]
+```{r pivot_longer, echo=TRUE}
+gathered <- airquality %>%
+  pivot_longer(everything())
+
+head(gathered)
+```
+
+To revert to wide format, use `pivot_wider()`.
+]
+]
+
+---
+
+## Wrangling data
+
+.panelset[
+
+.panel[.panel-name[filter()]
+
+.pull-left-1[
+Filter by 1 condition:
+
+```{r filter1, echo=TRUE, eval=FALSE}
+penguins %>%
+  filter(sex == "female") %>%
+  head(n=3)
+```
+
+Filter by 2+ conditions:
+
+```{r filter2, echo=TRUE, eval=FALSE}
+penguins %>%
+  filter(sex == "female", body_mass_g > 3500) %>%
+  head(n=3)
+```
+]
+
+.pull-right-2[
+```{r show_filter1, ref.label="filter1"}
+```
+
+```{r show_filter2, ref.label="filter1"}
+```
+
+]
+
+
+]
+
+.panel[.panel-name[select()]
+```{r select, echo=TRUE}
+penguins %>%
+  filter(species == "Adelie") %>%
+  select(bill_length_mm, bill_depth_mm)
+```
+]
+
+.panel[.panel-name[arrange()]
+.pull-left-1[
+
+Sort in ascending order.
+
+```{r arrange1, echo=TRUE, eval=FALSE}
+penguins %>%
+  select(species, bill_length_mm, year) %>%
+  arrange(bill_length_mm) %>%
+  head(n=3)
+```
+
+Sort in descending, then ascending order.
+
+```{r arrange2, echo=TRUE, eval=FALSE}
+penguins %>%
+  select(species, bill_length_mm, bill_depth_mm, year) %>%
+  arrange(-bill_length_mm, bill_depth_mm) %>%
+  head(n=3)
+```
+]
+
+.pull-right-2[
+```{r show_arrange1, ref.label="arrange1"}
+```
+
+```{r show_arrange2, ref.label="arrange2"}
+```
+]
+]
+
+.panel[.panel-name[mutate()]
+
+```{r mutate, echo=TRUE}
+penguins %>%
+  select(species, island, bill_length_mm, bill_depth_mm) %>%
+  mutate(length_times_depth = bill_length_mm * bill_depth_mm)
+```
+]
+
+.panel[.panel-name[separate()]
+
+```{r load_conservation}
+conservation <- read_csv("https://raw.githubusercontent.com/suzanbaert/Dplyr_Tutorials/master/conservation_explanation.csv")
+```
+
+.pull-left-2[
+```{r separate, echo=TRUE, eval=FALSE}
+# Show original data
+head(conservation, n=3)
+
+# Separate columns
+sep <- conservation %>%
+  separate(`conservation abbreviation`, 
+           into = c("abbreviation", "description"), sep = " = ") %>%
+  head(n=3)
+sep
+```
+]
+
+.pull-right-1[
+```{r show_separate, ref.label="separate"}
+```
+]
+
+]
+
+.panel[.panel-name[unite()]
+```{r unite, echo=TRUE}
+sep %>%
+  unite(united_col, abbreviation, description, sep = " = ") %>%
+  head(n=3)
+```
+]
+
+.panel[.panel-name[clean_names()]
+```{r clean_names, echo=TRUE}
+library(janitor)
+conservation %>%
+  clean_names()
+```
+]
+
+]
+
+---
+
+background-image: url("https://media.giphy.com/media/ZVik7pBtu9dNS/giphy.gif")
+background-position: 5% 50%
+background-size: 35%
+
+## Exercise #1
+
+.pull-right-2[
+Filter the `penguins` data set to keep only female penguins from species "Adelie"
+and sort them by bill length in ascending order.
+
+- What are the first 3 values for `bill_length_mm`?
+
+- From which island are the top 3 Adelie penguins with the smallest bill?
+]
+
+---
+
+background-image: url("https://media.giphy.com/media/ZVik7pBtu9dNS/giphy.gif")
+background-position: 5% 50%
+background-size: 35%
+
+## Exercise #2
+
+.pull-right-2[
+Filter the `penguins` data set to remove observations from the year 2007. Then, select only the columns `species`, `sex`, and `body_mass_g`. Finally, create a new column named `body_mass_kg` with the body mass represented in kilograms and sort this column in descending order.
+
+- What are weights (in kg) of the 5 heaviest penguins?
+
+- What are their species?
+
+- What are their sexes?
+
+]
+
+
+---
+
+background-image: url("https://media.giphy.com/media/ZVik7pBtu9dNS/giphy.gif")
+background-position: 5% 50%
+background-size: 35%
+
+## Exercise #3
+
+.pull-right-2[
+<br />
+
+- How many penguins have flipper length between 200 and 215 mm?
+
+**Tip:** you can use the `count()` or the `nrow()` function to count.
+]
+
+---
+
+background-image: url("https://data-lessons.github.io/gapminder-R/fig/dplyr-joins.png")
+background-size: 60%
+
+## Joins
+
+---
+
+background-image: url("https://github.com/gadenbuie/tidyexplain/raw/master/images/inner-join.gif")
+background-size: 60%
+
+## Joins
+
+---
+
+background-image: url("httpshttps://github.com/gadenbuie/tidyexplain/raw/master/images/left-join.gif")
+background-size: 60%
+
+## Joins
+
+---
+
+background-image: url("https://github.com/gadenbuie/tidyexplain/raw/master/images/left-join-extra.gif")
+background-size: 60%
+
+## Joins
+
+---
+
+background-image: url("https://github.com/gadenbuie/tidyexplain/raw/master/images/right-join.gif")
+background-size: 60%
+
+## Joins
+
+---
+
+background-image: url("https://github.com/gadenbuie/tidyexplain/raw/master/images/full-join.gif")
+background-size: 60%
+
+## Joins
+
+---
+
+## Joining data
+
+.panelset[
+
+.panel[.panel-name[The data]
+```{r data_joins}
+superheroes <- tibble::tribble(
+       ~name, ~alignment,  ~gender,          ~publisher,
+   "Magneto",      "bad",   "male",            "Marvel",
+     "Storm",     "good", "female",            "Marvel",
+  "Mystique",      "bad", "female",            "Marvel",
+    "Batman",     "good",   "male",                "DC",
+     "Joker",      "bad",   "male",                "DC",
+  "Catwoman",      "bad", "female",                "DC",
+   "Hellboy",     "good",   "male", "Dark Horse Comics"
+  )
+
+publishers <- tibble::tribble(
+  ~publisher, ~yr_founded,
+        "DC",       1934L,
+    "Marvel",       1939L,
+     "Image",       1992L
+  )
+```
+
+.pull-left[
+```{r show_data_joins1, echo=TRUE}
+superheroes
+```
+]
+
+.pull-right[
+```{r show_data_join2, echo=TRUE}
+publishers
+```
+]
+]
+
+.panel[.panel-name[inner_join()]
+```{r inner_join, echo=TRUE}
+inner_join(superheroes, publishers)
+```
+]
+
+.panel[.panel-name[semi_join()]
+```{r semi_join, echo=TRUE}
+semi_join(superheroes, publishers)
+```
+]
+
+.panel[.panel-name[left_join()]
+```{r left_join, echo=TRUE}
+left_join(superheroes, publishers)
+```
+]
+
+.panel[.panel-name[anti_join()]
+```{r anti_join, echo=TRUE}
+anti_join(superheroes, publishers)
+```
+]
+
+.panel[.panel-name[full_join()]
+```{r full_join, echo=TRUE}
+full_join(superheroes, publishers)
+```
+]
+]
+
+---
+
+## Summarizing data
+
+.panelset[
+
+.panel[.panel-name[summarize()]
+.pull-left-1[
+```{r summarize1, echo=TRUE, eval=FALSE}
+head(msleep)
+msleep %>%
+  select(genus) %>%
+  summarize(N=n())
+```
+]
+
+.pull-right-2[
+```{r show_summarize1, ref.label="summarize1"}
+```
+]
+]
+
+.panel[.panel-name[group_by() [1]]
+.pull-left[
+```{r group_by1, eval=FALSE, echo=TRUE}
+msleep %>%
+  group_by(order) %>% 
+  select(order) %>%
+  summarize(N=n())
+```
+]
+
+.pull-right[
+```{r show_groupby1, ref.label='group_by1'}
+```
+]
+]
+
+.panel[.panel-name[group_by() [2]]
+.pull-left[
+```{r group_by2, echo=TRUE, eval=FALSE}
+msleep %>%
+  group_by(order) %>% 
+  select(order, sleep_total) %>%
+  summarize(N=n(), mean_sleep=mean(sleep_total))
+```
+]
+
+.pull-right[
+```{r show_group_by2, ref.label='group_by2'}
+```
+]
+]
+
+.panel[.panel-name[count()]
+.pull-left[
+```{r count, echo=TRUE, eval=FALSE}
+msleep %>%
+  count(vore, order)
+```
+]
+
+.pull-right[
+```{r show_count, ref.label='count'}
+```
+]
+]
+
+.panel[.panel-name[tabyl()]
+.pull-left[
+```{r tabyl, echo=TRUE, eval=FALSE}
+msleep %>%
+  tabyl(order)
+```
+]
+
+.pull-right[
+```{r show_tabyl, ref.label='tabyl'}
+```
+]
+]
+
+]
+
+---
+
+---
+
+background-image: url("https://media.giphy.com/media/ZVik7pBtu9dNS/giphy.gif")
+background-position: 5% 50%
+background-size: 35%
+
+## Exercise #4
+
+.pull-right-2[
+<br />
+
+- For each species, what is the mean body mass **(in kg)** by sex?
+
+]
+
+---
+
+## Operations across() columns
+
+.panelset[
+.panel[.panel-name[Example 1]
+
+Use across() to apply a function to all (or user-defined) columns.
+
+.pull-left[
+```{r across, echo=TRUE, eval=FALSE}
+head(airquality, n=3)
+airquality %>%
+  summarize(across(Ozone:Temp, mean, na.rm = TRUE))
+```
+]
+.pull-right[
+```{r show_across, ref.label="across"}
+```
+]
+]
+
+.panel[.panel-name[Example 2]
+
+.pull-left[
+```{r across2, echo=TRUE, eval=FALSE}
+airquality %>%
+  filter(across(Ozone:Temp, ~ !is.na(.)))
+```
+]
+.pull-right[
+```{r show_across2, ref.label="across2"}
+```
+]
+]
+
+.panel[.panel-name[Example 3]
+
+.pull-left[
+```{r across3, echo=TRUE, eval=FALSE}
+airquality %>%
+  mutate(across(Ozone:Temp, ~ replace_na(., 0)))
+```
+]
+.pull-right[
+```{r show_across3, ref.label="across3"}
+```
+]
+]
+]
+
+---
+
+## String manipulation with {stringr}
+
+.panelset[
+
+.panel[.panel-name[str_c()] .pull-left[
+```{r str_c, echo=TRUE, eval=FALSE}
+msleep %>%
+  mutate(name_genus = str_c(name, genus, "_")) %>%
+  select(name_genus)
+```
+]
+.pull-right[
+```{r str_cview, ref.label='str_c'}
+```
+]
+]
+
+.panel[.panel-name[str_sub()]
+```{r str_sub, echo=TRUE}
+genes <- c("Glyma.15G026400.1", "Glyma.15G026400.2", "Glyma.15G026400.3")
+str_sub(genes, 1, 15)
+```
+]
+
+.panel[.panel-name[str_detect()]
+```{r echo=TRUE}
+genes <- c("AT2G25880", "AT2G45490", "Achn130491", "ATR0705G186", "ATR0705G186")
+genes[str_detect(genes, "^AT[0-9]+")]
+```
+]
+
+.panel[.panel-name[str_replace()]
+```{r str_replace, echo=TRUE}
+genes <- c("Glyma.15G026400.1", "Glyma.15G026400.2", "Glyma.15G026400.3")
+str_replace(genes, "\\.[0-9]$", "")
+```
+]
+]
+
+---
+
+background-image: url("https://media.giphy.com/media/fCU27lxFIsDaRhKCe2/giphy.gif")
+background-position: 5% 50%
+background-size: 35%
+
+## Exercise #5
+
+.pull-right-2[
+<br />
+
+Load the Netflix titles data set and find the shows/movies starring Millie Bobby Brown.
+
+- How many are they?
+
+- What are their names?
+
+Link [here](https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-04-20/netflix_titles.csv).
+
+]
+
+---
+
+background-image: url("https://media.giphy.com/media/ZVik7pBtu9dNS/giphy.gif")
+background-position: 5% 50%
+background-size: 35%
+
+## Exercise #6
+
+.pull-right-2[
+<br />
+
+From the netflix title data set, count the number of titles per country.
+
+- What are the top 3 countries with the largest number of movies/shows?
+
+- Where is Brazil in this ranking?
+
+**Tip:** you will need the separate_rows() function.
+]
+
